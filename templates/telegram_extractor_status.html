@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-black">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JETTOOL • Live Extraction v2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: 'Exo 2', sans-serif; background: radial-gradient(circle at center, #1a0033, #000000); color: #e0e7ff; }
+        .glass { background: rgba(15, 10, 45, 0.95); backdrop-filter: blur(40px); border: 1px solid rgba(0, 212, 255, 0.4); }
+        .neon { box-shadow: 0 0 100px rgba(0, 212, 255, 0.7); }
+        .progress-fill { transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.8; box-shadow: 0 0 30px rgba(0, 212, 255, 0.6); } 50% { opacity: 1; box-shadow: 0 0 60px rgba(0, 212, 255, 0.9); } }
+        .log-entry { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-download { background: linear-gradient(135deg, #00ff88, #00cc66); transition: all 0.6s; }
+        .btn-download:hover { transform: translateY(-12px) scale(1.1); box-shadow: 0 30px 80px rgba(0, 255, 136, 0.8); }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                LIVE EXTRACTION MONITOR
+            </h1>
+            <p class="text-2xl md:text-3xl text-cyan-300 mt-4">Real-time discovery of active members</p>
+        </div>
+
+        <div class="glass rounded-3xl p-8 md:p-16 neon">
+            <!-- Live Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div class="bg-black/60 rounded-3xl p-8 text-center border-4 border-purple-600 pulse">
+                    <p class="text-gray-300 text-lg mb-3">Discovered Users</p>
+                    <p id="discovered-count" class="text-5xl md:text-6xl font-black text-purple-400">0</p>
+                </div>
+                <div class="bg-black/60 rounded-3xl p-8 text-center border-4 border-cyan-600">
+                    <p class="text-gray-300 text-lg mb-3">Total Extracted</p>
+                    <p id="members-count" class="text-5xl md:text-6xl font-black text-cyan-400">0</p>
+                </div>
+                <div class="bg-black/60 rounded-3xl p-8 text-center border-4 border-green-600">
+                    <p class="text-gray-300 text-lg mb-3">Contacts Added</p>
+                    <p id="contacts-added" class="text-5xl md:text-6xl font-black text-green-400">0</p>
+                </div>
+                <div class="bg-black/60 rounded-3xl p-8 text-center border-4 border-yellow-600">
+                    <p class="text-gray-300 text-lg mb-3">Requests Sent</p>
+                    <p id="requests-sent" class="text-5xl md:text-6xl font-black text-yellow-400">0</p>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="mb-12">
+                <div class="h-16 bg-black/70 rounded-full overflow-hidden border-6 border-cyan-500">
+                    <div id="progress-fill" class="h-full bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="text-center mt-6">
+                    <p class="text-5xl md:text-6xl font-black text-white">
+                        <span id="progress-percent">0%</span>
+                    </p>
+                    <p id="current-status" class="text-2xl md:text-3xl text-cyan-300 mt-4">Initializing extraction engine...</p>
+                </div>
+            </div>
+
+            <!-- Final Result -->
+            <div id="result-section" class="hidden text-center py-16">
+                <div id="success-result" class="hidden">
+                    <i class="fas fa-trophy text-10xl text-yellow-400 mb-10 animate-bounce"></i>
+                    <h2 class="text-6xl md:text-8xl font-black text-green-400 mb-8">EXTRACTION SUCCESS!</h2>
+                    <p class="text-3xl md:text-4xl text-white mb-12">
+                        <span id="final-count">0</span> members discovered •
+                        <span id="final-contacts">0</span> contacts added •
+                        <span id="final-requests">0</span> requests sent
+                    </p>
+
+                    <!-- Download Buttons -->
+                    <div id="report-download" class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
+                        <button id="download-csv" class="btn-download rounded-3xl p-12 text-center">
+                            <i class="fas fa-file-csv text-8xl text-cyan-300 mb-6"></i>
+                            <p class="text-3xl font-black text-white">DOWNLOAD CSV REPORT</p>
+                        </button>
+                        <button id="download-xlsx" class="btn-download rounded-3xl p-12 text-center">
+                            <i class="fas fa-file-excel text-8xl text-green-300 mb-6"></i>
+                            <p class="text-3xl font-black text-white">DOWNLOAD EXCEL REPORT</p>
+                        </button>
+                    </div>
+
+                    <!-- View Full Data Button -->
+                    <div class="mt-12">
+                        <button onclick="window.location.href='/view-data/' + taskId"
+                                class="bg-gradient-to-r from-orange-600 to-red-600 text-white text-3xl font-black py-8 px-16 rounded-full hover:scale-110 transition shadow-2xl cursor-pointer">
+                            <i class="fas fa-table mr-4"></i> VIEW FULL EXTRACTED DATA
+                        </button>
+                    </div>
+                </div>
+
+                <div id="failure-result" class="hidden">
+                    <i class="fas fa-skull-crossbones text-10xl text-red-500 mb-10"></i>
+                    <h2 class="text-6xl md:text-8xl font-black text-red-400 mb-8">EXTRACTION FAILED</h2>
+                    <p class="text-3xl text-gray-300">Check logs for details</p>
+                </div>
+            </div>
+
+            <!-- Real-Time Log -->
+            <div class="mt-16">
+                <h3 class="text-4xl md:text-5xl text-cyan-300 mb-8 text-center flex items-center justify-center gap-6">
+                    <i class="fas fa-terminal pulse"></i> Real-Time Log
+                </h3>
+                <div id="log-container" class="bg-black/90 rounded-3xl p-10 h-96 overflow-y-auto border-6 border-cyan-800 font-mono text-base leading-relaxed">
+                    <div class="text-center text-gray-500 py-32">Waiting for extraction to begin...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const taskId = window.location.pathname.split('/').pop();
+
+        const el = {
+            progressFill: document.getElementById('progress-fill'),
+            progressPercent: document.getElementById('progress-percent'),
+            currentStatus: document.getElementById('current-status'),
+            discoveredCount: document.getElementById('discovered-count'),
+            membersCount: document.getElementById('members-count'),
+            contactsAdded: document.getElementById('contacts-added'),
+            requestsSent: document.getElementById('requests-sent'),
+            logContainer: document.getElementById('log-container'),
+            resultSection: document.getElementById('result-section'),
+            successResult: document.getElementById('success-result'),
+            failureResult: document.getElementById('failure-result'),
+            finalCount: document.getElementById('final-count'),
+            finalContacts: document.getElementById('final-contacts'),
+            finalRequests: document.getElementById('final-requests'),
+            downloadCsv: document.getElementById('download-csv'),
+            downloadXlsx: document.getElementById('download-xlsx')
+        };
+
+        let extractedData = []; // will store extracted members
+
+        function poll() {
+            fetch(`/task-status/${taskId}`)
+                .then(r => r.json())
+                .then(data => {
+                    // Update Progress
+                    el.progressFill.style.width = data.progress + '%';
+                    el.progressPercent.textContent = data.progress + '%';
+                    if (data.current) el.currentStatus.textContent = data.current;
+
+                    // Update Counters
+                    if (data.result) {
+                        el.membersCount.textContent = data.result.total.toLocaleString();
+                        el.discoveredCount.textContent = data.result.total.toLocaleString();
+                        el.contactsAdded.textContent = data.result.added_to_contacts || 0;
+                        el.requestsSent.textContent = data.result.friend_requests_sent || 0;
+                        extractedData = data.result.members || [];
+                    }
+
+                    // Update logs
+                    if (data.logs && data.logs.length > 0) {
+                        const recentLogs = data.logs.slice(-50);
+                        el.logContainer.innerHTML = recentLogs.map(l =>
+                            `<div class="log-entry py-2 border-b border-cyan-900/30">
+                                <span class="text-cyan-400">[${l.time.slice(11, 19)}]</span>
+                                <span class="${l.level === 'critical' ? 'text-green-400 font-bold' : l.level === 'error' ? 'text-red-400' : 'text-gray-200'}">
+                                    ${l.message}
+                                </span>
+                            </div>`).join('');
+                        el.logContainer.scrollTop = el.logContainer.scrollHeight;
+                    }
+
+                    // Completion
+                    if (data.status === "completed") {
+                        el.resultSection.classList.remove('hidden');
+                        if (data.result.success) {
+                            el.successResult.classList.remove('hidden');
+                            el.finalCount.textContent = (data.result.total || 0).toLocaleString();
+                            el.finalContacts.textContent = data.result.added_to_contacts || 0;
+                            el.finalRequests.textContent = data.result.friend_requests_sent || 0;
+                        } else {
+                            el.failureResult.classList.remove('hidden');
+                        }
+                    } else if (data.status === "failed") {
+                        el.resultSection.classList.remove('hidden');
+                        el.failureResult.classList.remove('hidden');
+                    } else {
+                        setTimeout(poll, 1200);
+                    }
+                })
+                .catch(() => setTimeout(poll, 5000));
+        }
+
+        // CSV Download
+        el.downloadCsv.addEventListener('click', () => {
+            if (!extractedData.length) return alert("No data available to download.");
+            const rows = [['User ID','Username','Full Name','Phone','Country','Premium','Last Seen','Bio']];
+            extractedData.forEach(m => {
+                rows.push([
+                    m.user_id || '',
+                    m.username || '',
+                    m.full_name || '',
+                    m.phone || '',
+                    m.country || '',
+                    m.premium || '',
+                    m.last_seen || '',
+                    m.bio || ''
+                ]);
+            });
+            let csvContent = "data:text/csv;charset=utf-8,"
+                + rows.map(e => e.map(a => `"${a.replace(/"/g,'""')}"`).join(",")).join("\n");
+            const link = document.createElement("a");
+            link.href = encodeURI(csvContent);
+            link.download = `extracted_members_${taskId}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Excel Download
+        el.downloadXlsx.addEventListener('click', () => {
+            if (!extractedData.length) return alert("No data available to download.");
+            const ws_data = [['User ID','Username','Full Name','Phone','Country','Premium','Last Seen','Bio']];
+            extractedData.forEach(m => {
+                ws_data.push([
+                    m.user_id || '',
+                    m.username || '',
+                    m.full_name || '',
+                    m.phone || '',
+                    m.country || '',
+                    m.premium || '',
+                    m.last_seen || '',
+                    m.bio || ''
+                ]);
+            });
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            XLSX.utils.book_append_sheet(wb, ws, "Members");
+            XLSX.writeFile(wb, `extracted_members_${taskId}.xlsx`);
+        });
+
+        poll();
+    </script>
+</body>
+</html>

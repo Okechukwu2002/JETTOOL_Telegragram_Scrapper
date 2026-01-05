@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JETTOOL • Extracted Intelligence Report</title>
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- DataTables -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.tailwindcss.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.tailwindcss.min.css">
+
+    <style>
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: radial-gradient(circle at 20% 80%, #1a0033, #000000);
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(15, 10, 45, 0.92);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 80px rgba(0, 212, 255, 0.3);
+        }
+        .neon-glow {
+            box-shadow: 0 0 60px rgba(0, 212, 255, 0.6);
+        }
+        .profile-pic {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #00d4ff;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+            transition: transform 0.3s ease;
+        }
+        .profile-pic:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 50px rgba(0, 212, 255, 1);
+        }
+        th {
+            background: linear-gradient(135deg, #00d4ff, #0099cc) !important;
+            color: white !important;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        tbody tr:hover {
+            background: rgba(0, 212, 255, 0.15) !important;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        .premium-badge {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: black;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        .dataTables_wrapper .dataTables_filter input {
+            background: #111;
+            border: 2px solid #00d4ff;
+            color: white;
+            border-radius: 1rem;
+            padding: 0.6rem 1rem;
+        }
+        .dataTables_wrapper .dataTables_length select {
+            background: #111;
+            border: 2px solid #00d4ff;
+            color: white;
+            border-radius: 1rem;
+        }
+        .console-box {
+            margin-top: 2rem;
+            background: #111;
+            border: 2px solid #00d4ff;
+            border-radius: 1rem;
+            padding: 1rem;
+            font-family: monospace;
+            color: #00ffcc;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 lg:p-12">
+<div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <h1 class="text-5xl md:text-7xl font-black bg-gradient-to-r from-cyan-300 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-4">
+            EXTRACTED INTELLIGENCE REPORT
+        </h1>
+        <p class="text-2xl md:text-4xl text-cyan-300 font-light">
+            <span class="font-bold text-4xl md:text-5xl" id="member-count">{{ members|length }}</span> Active Members Discovered
+        </p>
+        <button id="download-btn" class="mt-4 bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-cyan-500/50 transition-all">
+            <i class="fas fa-download mr-2"></i> Download CSV
+        </button>
+    </div>
+
+    <!-- Data Table -->
+    <div class="glass rounded-3xl p-8 md:p-12 neon-glow">
+        <div class="overflow-x-auto">
+            <table id="dataTable" class="w-full text-left">
+                <thead>
+                <tr>
+                    <th class="p-6 text-center">Profile Photo</th>
+                    <th class="p-6">User ID</th>
+                    <th class="p-6">Username</th>
+                    <th class="p-6">Full Name</th>
+                    <th class="p-6">Phone Number</th>
+                    <th class="p-6">Country</th>
+                    <th class="p-6">Status</th>
+                    <th class="p-6">Last Seen</th>
+                    <th class="p-6">Bio</th>
+                </tr>
+                </thead>
+                <tbody id="members-body">
+                {% for m in members %}
+                <tr id="member-{{ m.user_id }}" class="border-b border-cyan-900/30">
+                    <td class="p-6 text-center">
+                        {% if m.photo_url %}
+                        <img src="{{ m.photo_url }}" alt="Profile" class="profile-pic mx-auto" onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/no-photo.png') }}';">
+                        {% else %}
+                        <div class="no-photo w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-900 to-cyan-500 border-4 border-dashed border-cyan-300">
+                            <i class="fas fa-user text-xl text-cyan-300"></i>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td class="p-6 font-mono text-sm">{{ m.user_id }}</td>
+                    <td class="p-6 font-medium">{% if m.username %}<span class="text-cyan-300">{{ m.username }}</span>{% else %}<span class="text-gray-500">No username</span>{% endif %}</td>
+                    <td class="p-6">{% if m.full_name %}{{ m.full_name }}{% else %}<span class="text-gray-500">Hidden</span>{% endif %}</td>
+                    <td class="p-6 font-mono text-green-400 text-lg">{% if m.phone and m.phone != "Hidden" %}{{ m.phone }}{% else %}<span class="text-gray-500">Hidden</span>{% endif %}</td>
+                    <td class="p-6 text-center font-medium">{% if m.country and m.country != "Unknown" %}<span class="text-yellow-300">{{ m.country }}</span>{% else %}<span class="text-gray-500">Unknown</span>{% endif %}</td>
+                    <td class="p-6 text-center">{% if m.premium == "Yes" %}<span class="premium-badge"><i class="fas fa-crown mr-2"></i> PREMIUM</span>{% else %}<span class="text-gray-400">Standard</span>{% endif %}</td>
+                    <td class="p-6">{% if m.last_seen %}<span class="text-cyan-300">{{ m.last_seen }}</span>{% else %}<span class="text-gray-500">Hidden</span>{% endif %}</td>
+                    <td class="p-6 max-w-xs"><p class="truncate text-gray-300">{{ m.bio or "No bio available" }}</p></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-16">
+        <a href="/{{ task_id }}"
+           class="inline-block bg-gradient-to-r from-purple-600 via-cyan-600 to-blue-700 text-white text-2xl md:text-3xl font-black py-6 px-16 rounded-full hover:scale-110 transition-all duration-500 shadow-2xl hover:shadow-cyan-500/50">
+            ← RETURN TO MONITOR
+        </a>
+    </div>
+
+    <!-- Real-Time Console -->
+    <div class="console-box" id="console-box">
+        <strong>Console:</strong><br>
+    </div>
+</div>
+
+<script>
+const noPhotoUrl = "{{ url_for('static', filename='img/no-photo.png') }}";
+
+// Initialize DataTable
+let dataTable;
+$(document).ready(function() {
+    dataTable = $('#dataTable').DataTable({
+        pageLength: 25,
+        lengthMenu: [10, 25, 50, 100],
+        order: [[1, 'desc']],
+        responsive: true,
+        language: {
+            search: "🔍 Search members:",
+            lengthMenu: "Show _MENU_ entries",
+            info: "Showing _START_ to _END_ of _TOTAL_ members",
+            paginate: { first: "«", last: "»", next: "›", previous: "‹" }
+        },
+        columnDefs: [
+            { targets: 0, orderable: false, width: "100px" },
+            { targets: [4,5,6], className: "text-center" }
+        ]
+    });
+
+    // Polling every 5 seconds
+    setInterval(fetchUpdates, 5000);
+
+    // CSV Download
+    $('#download-btn').click(function() {
+        downloadCSV();
+    });
+});
+
+// Fetch real-time updates
+function fetchUpdates() {
+    $.getJSON("{{ url_for('task_status_api', task_id=task_id) }}", function(members) {
+
+        $('#member-count').text(members.length);
+
+        members.forEach(m => {
+            const rowId = "#member-" + m.user_id;
+            if ($(rowId).length) {
+                // Update existing row
+                $(rowId + " img").attr("src", m.photo_url || noPhotoUrl);
+                $(rowId + " .truncate").text(m.bio || "No bio available");
+                $(rowId + " td:nth-child(6) span").text(m.country || "Unknown");
+                $(rowId + " td:nth-child(8) span").text(m.last_seen || "Hidden");
+            } else {
+                // Append new member row
+                $('#members-body').append(`
+                    <tr id="member-${m.user_id}" class="border-b border-cyan-900/30">
+                        <td class="p-6 text-center">
+                            <img src="${m.photo_url || noPhotoUrl}" class="profile-pic mx-auto" onerror="this.onerror=null;this.src='${noPhotoUrl}';">
+                        </td>
+                        <td class="p-6 font-mono text-sm">${m.user_id}</td>
+                        <td class="p-6 font-medium text-cyan-300">${m.username || "No username"}</td>
+                        <td class="p-6">${m.full_name || "Hidden"}</td>
+                        <td class="p-6 font-mono text-green-400 text-lg">${m.phone || "Hidden"}</td>
+                        <td class="p-6 text-center font-medium">${m.country || "Unknown"}</td>
+                        <td class="p-6 text-center">${m.premium == "Yes" ? '<span class="premium-badge"><i class="fas fa-crown mr-2"></i> PREMIUM</span>' : '<span class="text-gray-400">Standard</span>'}</td>
+                        <td class="p-6 text-cyan-300">${m.last_seen || "Hidden"}</td>
+                        <td class="p-6 max-w-xs"><p class="truncate text-gray-300">${m.bio || "No bio available"}</p></td>
+                    </tr>
+                `);
+            }
+        });
+
+        // Update console
+        const log = "Updated at: " + new Date().toLocaleTimeString() + " | Total members: " + members.length + "<br>";
+        $('#console-box').prepend(log);
+    });
+}
+
+// CSV Download Function
+function downloadCSV() {
+    const rows = [['User ID','Username','Full Name','Phone Number','Country','Status','Last Seen','Bio']];
+    $('#dataTable tbody tr').each(function() {
+        const cols = $(this).find('td');
+        rows.push([
+            $(cols[1]).text().trim(),
+            $(cols[2]).text().trim(),
+            $(cols[3]).text().trim(),
+            $(cols[4]).text().trim(),
+            $(cols[5]).text().trim(),
+            $(cols[6]).text().trim(),
+            $(cols[7]).text().trim(),
+            $(cols[8]).text().trim()
+        ]);
+    });
+
+    let csvContent = "data:text/csv;charset=utf-8,"
+        + rows.map(e => e.map(a => `"${a.replace(/"/g,'""')}"`).join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "extracted_members.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
+</body>
+</html>

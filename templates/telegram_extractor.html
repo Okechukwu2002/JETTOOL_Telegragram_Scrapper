@@ -1,0 +1,116 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-black">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JETTOOL • Telegram Extractor v2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body { font-family: 'Exo 2', sans-serif; background: radial-gradient(circle at top left, #1a0033, #000000); }
+        .glass { background: rgba(15, 10, 45, 0.92); backdrop-filter: blur(30px); border: 1px solid rgba(0, 212, 255, 0.3); }
+        .neon { box-shadow: 0 0 60px rgba(0, 212, 255, 0.6); }
+        .btn-launch {
+            background: linear-gradient(135deg, #00d4ff, #0099cc, #0077aa);
+            transition: all 0.6s;
+        }
+        .btn-launch:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 30px 80px rgba(0, 212, 255, 0.8);
+        }
+        .input-glow:focus {
+            border-color: #00d4ff;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-4xl">
+        <div class="text-center mb-12">
+            <img src="/static/images/jettool_new_logo.png" alt="JETTOOL" class="w-32 h-32 mx-auto rounded-full border-4 border-cyan-500 shadow-2xl">
+            <h1 class="text-5xl md:text-7xl font-black mt-8 bg-gradient-to-r from-cyan-400 to-purple-600 bg-clip-text text-transparent">
+                JETTOOL TELEGRAM EXTRACTOR
+            </h1>
+            <p class="text-xl md:text-2xl text-cyan-300 mt-4">Extract Intelligence • Add Contacts • Multi-Format Reports</p>
+        </div>
+
+        <div class="glass rounded-3xl p-8 md:p-16 neon">
+            <form method="POST" action="/">
+                <div class="mb-10">
+                    <label class="text-2xl md:text-3xl text-cyan-300 font-bold mb-4 block">
+                        Target Group / Channel
+                    </label>
+                    <input type="text" name="target" required placeholder="https://t.me/username or @username"
+                           class="w-full bg-black/60 border-4 border-gray-700 rounded-2xl p-6 text-xl text-white input-glow transition">
+                    <p class="text-gray-400 mt-2">Public or private groups you're a member of</p>
+                </div>
+
+                <div class="mb-12">
+                    <label class="text-2xl md:text-3xl text-green-400 font-bold mb-4 block flex items-center gap-6">
+                        <i class="fas fa-user-plus text-3xl text-green-400"></i>
+                        Add Extracted Users to My Group (Optional)
+                    </label>
+                    <input type="text" name="my_group" placeholder="https://t.me/mychannel or @mygroup"
+                           class="w-full bg-black/60 border-4 border-green-700 rounded-2xl p-6 text-xl text-white input-glow transition">
+                    <p class="text-gray-400 mt-2">All discovered users will be invited to this group</p>
+                </div>
+
+                <div class="mb-12">
+                    <h3 class="text-2xl md:text-3xl text-cyan-300 font-bold mb-6">Advanced Options</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <label class="flex items-center gap-4 text-white cursor-pointer">
+                            <input type="checkbox" name="aggressive" checked class="w-6 h-6 accent-cyan-500 rounded">
+                            <div>
+                                <div class="font-medium">Aggressive Mode</div>
+                                <div class="text-sm text-gray-400">Up to 200k members</div>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-4 text-white cursor-pointer">
+                            <input type="checkbox" name="include_phone" checked class="w-6 h-6 accent-cyan-500 rounded">
+                            <div>Phone Numbers</div>
+                        </label>
+                        <label class="flex items-center gap-4 text-white cursor-pointer">
+                            <input type="checkbox" name="include_bio" checked class="w-6 h-6 accent-cyan-500 rounded">
+                            <div>User Bios</div>
+                        </label>
+                        <label class="flex items-center gap-4 text-white cursor-pointer">
+                            <input type="checkbox" name="include_premium" checked class="w-6 h-6 accent-cyan-500 rounded">
+                            <div>Premium Status</div>
+                        </label>
+                        <label class="flex items-center gap-4 text-white cursor-pointer">
+                            <input type="checkbox" name="include_last_seen" checked class="w-6 h-6 accent-cyan-500 rounded">
+                            <div>Last Seen</div>
+                        </label>
+                        <label class="flex items-center gap-4 text-white cursor-pointer">
+                            <input type="checkbox" name="include_names" checked class="w-6 h-6 accent-cyan-500 rounded">
+                            <div>Full Names & IDs</div>
+                        </label>
+                        <label class="flex items-center gap-4 text-white cursor-pointer">
+                            <input type="checkbox" name="include_photos" class="w-6 h-6 accent-cyan-500 rounded">
+                            <div>Profile Photos</div>
+                        </label>
+                        <label class="flex items-center gap-4 text-white cursor-pointer">
+                            <input type="checkbox" name="add_to_contacts" class="w-6 h-6 accent-cyan-500 rounded">
+                            <div>
+                                <div>Add to My Contacts</div>
+                                <div class="text-sm text-gray-400">Phones + Friend Requests</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn-launch text-3xl md:text-4xl font-black text-white py-8 px-20 rounded-full">
+                        LAUNCH TELEGRAM EXTRACTION
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
